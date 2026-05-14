@@ -25,6 +25,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.unit.sp
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.ui.draw.clip
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.height
 
 @Composable
 fun WeatherScreen() {
@@ -39,14 +45,15 @@ fun WeatherScreen() {
             .background(
                 brush = Brush.verticalGradient(
                     colors = listOf(
-                        Color(0xFF2B310D),
-                        Color(0xFF162119)
+                        Color(0xFF2A300B),
+                        Color(0xFF111813)
                     )
                 )
             )
-            .padding(16.dp),
+            .padding(horizontal = 16.dp)
+            .padding(top = 48.dp),
 
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.Top,
 
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -55,7 +62,7 @@ fun WeatherScreen() {
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(7.dp),
 
-        ) {
+            ) {
             Box(
                 modifier = Modifier
                     .background(
@@ -70,69 +77,199 @@ fun WeatherScreen() {
                     .clip(RoundedCornerShape(7.dp))
             ) {
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
 
-                horizontalArrangement = Arrangement.SpaceBetween,
+                    horizontalArrangement = Arrangement.SpaceBetween,
 
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-
-                Column {
-
-                    Text(
-                        text = "WeatherSnap",
-                        fontSize = 28.sp,
-                        color = Color(0xFF243010)
-                    )
-
-                    Text(
-                        text = "Live weather reports with camera evidence",
-                        fontSize = 12.sp,
-                        color = Color.DarkGray
-                    )
-                }
-
-                Button(
-                    onClick = {
-
-                    },
-                    shape = RoundedCornerShape(9.dp),
-
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF2A3402)
-                    )
-
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
 
-                    Text(text = "Reports")
+                    Column(
+                        modifier = Modifier.weight(1f)
+                    ) {
+
+                        Text(
+                            text = "WeatherSnap",
+                            fontSize = 18.sp,
+                            color = Color(0xFF243010),
+                            letterSpacing = 0.1.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+
+                        Text(
+                            text = "Live weather reports with camera evidence",
+                            fontSize = 10.sp,
+                            color = Color.DarkGray,
+                            letterSpacing = 0.1.sp,
+                            maxLines = 2,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
+
+                    Button(
+                        onClick = {
+
+                        },
+                        shape = RoundedCornerShape(9.dp),
+
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFF2A3402)
+                        ),
+                        contentPadding = PaddingValues(
+                            horizontal = 14.dp,
+                            vertical = 2.dp
+                        )
+
+                    ) {
+
+                        Text(
+                            text = "Reports",
+                            fontSize = 10.sp
+                        )
+                    }
                 }
-            }}
+            }
         }
+        Spacer(modifier = Modifier.height(20.dp))
 
-        OutlinedTextField(
-            value = city,
-
-            onValueChange = {
-                city = it
-            },
-
+        Card(
             modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(12.dp),
 
-            label = {
-                Text(text = "Enter City")
-            }
-        )
-
-        Button(
-            onClick = {
-
-            }
+            colors = CardDefaults.cardColors(
+                containerColor = Color(0xFF11150F)
+            )
         ) {
 
-            Text(text = "Search Weather")
+            Column(
+                modifier = Modifier.padding(14.dp)
+            ) {
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    OutlinedTextField(
+                        value = city,
+
+                        onValueChange = {
+                            city = it
+                        },
+
+                        modifier = Modifier.weight(1f),
+
+                        label = {
+                            Text(text = "City")
+                        },
+                        shape = RoundedCornerShape(5.dp),
+
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = Color(0xFF8FA86E),
+                            unfocusedBorderColor = Color(0xFF4A5440),
+
+                            focusedTextColor = Color.White,
+                            unfocusedTextColor = Color.White,
+
+                            focusedContainerColor = Color(0xFF1B2118),
+                            unfocusedContainerColor = Color(0xFF1B2118)
+                        )
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Button(
+                        onClick = {
+
+                        },
+                        shape = RoundedCornerShape(22.dp),
+
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFF8EA56C)
+                        ),
+
+                        contentPadding = PaddingValues(
+                            horizontal = 25.dp,
+                            vertical = 2.dp
+                        ),
+                        modifier = Modifier.align(Alignment.CenterVertically)
+                    ) {
+
+                        Text(
+                            text = "Search",
+                            fontSize = 10.sp
+                        )
+                    }
+                }
+
+                Text(
+                    text = "Enter more than 2 letters to start city suggestions.",
+                    color = Color.Gray,
+                    fontSize = 10.sp,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(20.dp))
+
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(16.dp),
+
+            colors = CardDefaults.cardColors(
+                containerColor = Color(0xFF11150F)
+            )
+        ) {
+
+            Column(
+                modifier = Modifier.padding(16.dp)
+            ) {
+
+                Text(
+                    text = "Jaipur",
+                    color = Color.White,
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold
+                )
+
+                Spacer(modifier = Modifier.height(6.dp))
+
+                Text(
+                    text = "32°C",
+                    color = Color(0xFFB7E07A),
+                    fontSize = 42.sp,
+                    fontWeight = FontWeight.Bold
+                )
+
+                Spacer(modifier = Modifier.height(6.dp))
+
+                Text(
+                    text = "Cloudy",
+                    color = Color.LightGray
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+
+                    Text(
+                        text = "Humidity\n65%",
+                        color = Color.White
+                    )
+
+                    Text(
+                        text = "Wind\n12 km/h",
+                        color = Color.White
+                    )
+
+                    Text(
+                        text = "Pressure\n1012 hPa",
+                        color = Color.White
+                    )
+                }
+            }
         }
     }
 }
