@@ -31,15 +31,19 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.height
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
-fun WeatherScreen() {
+fun WeatherScreen(
+    viewModel: WeatherViewModel = hiltViewModel()
+){
 
     var city by remember {
         mutableStateOf("")
     }
 
     Column(
+
         modifier = Modifier
             .fillMaxSize()
             .background(
@@ -57,6 +61,7 @@ fun WeatherScreen() {
 
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        val weather = viewModel.weatherData
 
         Card(
             modifier = Modifier.fillMaxWidth(),
@@ -179,7 +184,7 @@ fun WeatherScreen() {
                     Spacer(modifier = Modifier.width(8.dp))
                     Button(
                         onClick = {
-
+                            viewModel.getWeather()
                         },
                         shape = RoundedCornerShape(22.dp),
 
@@ -234,7 +239,7 @@ fun WeatherScreen() {
                 Spacer(modifier = Modifier.height(6.dp))
 
                 Text(
-                    text = "32°C",
+                    text = "${weather?.current?.temperature_2m ?: "--"}°C",
                     color = Color(0xFFB7E07A),
                     fontSize = 42.sp,
                     fontWeight = FontWeight.Bold
@@ -255,17 +260,17 @@ fun WeatherScreen() {
                 ) {
 
                     Text(
-                        text = "Humidity\n65%",
+                        text = "Humidity\n${weather?.current?.relative_humidity_2m ?: "--"}%",
                         color = Color.White
                     )
 
                     Text(
-                        text = "Wind\n12 km/h",
+                        text = "Wind\n${weather?.current?.wind_speed_10m ?: "--"} km/h",
                         color = Color.White
                     )
 
                     Text(
-                        text = "Pressure\n1012 hPa",
+                        text = "Pressure\n${weather?.current?.surface_pressure ?: "--"} hPa",
                         color = Color.White
                     )
                 }
@@ -277,5 +282,5 @@ fun WeatherScreen() {
 @Preview(showBackground = true)
 @Composable
 fun WeatherScreenPreview() {
-    WeatherScreen()
+
 }
