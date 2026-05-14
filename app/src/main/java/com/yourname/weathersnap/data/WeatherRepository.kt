@@ -18,4 +18,8 @@ class WeatherRepository @Inject constructor(
             longitude = longitude
         )
     }
+
+    suspend fun searchCity(
+        city: String
+    ) = weatherApi.searchCity(city)
 }

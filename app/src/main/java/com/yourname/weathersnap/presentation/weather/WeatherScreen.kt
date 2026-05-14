@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.Card
@@ -31,12 +32,15 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.material3.CircularProgressIndicator
 
 @Composable
 fun WeatherScreen(
     viewModel: WeatherViewModel = hiltViewModel()
-){
+) {
 
     var city by remember {
         mutableStateOf("")
@@ -61,7 +65,10 @@ fun WeatherScreen(
 
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
         val weather = viewModel.weatherData
+        val suggestions = viewModel.citySuggestions ?: emptyList()
+        val isSearching = viewModel.isSearchingCities
 
         Card(
             modifier = Modifier.fillMaxWidth(),
@@ -142,7 +149,7 @@ fun WeatherScreen(
 
         Card(
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(12.dp),
+            shape = RoundedCornerShape(7.dp),
 
             colors = CardDefaults.cardColors(
                 containerColor = Color(0xFF11150F)
@@ -160,7 +167,10 @@ fun WeatherScreen(
                         value = city,
 
                         onValueChange = {
+
                             city = it
+
+                            viewModel.searchCities(it)
                         },
 
                         modifier = Modifier.weight(1f),
@@ -184,7 +194,7 @@ fun WeatherScreen(
                     Spacer(modifier = Modifier.width(8.dp))
                     Button(
                         onClick = {
-                            viewModel.getWeather()
+                            viewModel.getWeather(city)
                         },
                         shape = RoundedCornerShape(22.dp),
 
@@ -212,13 +222,95 @@ fun WeatherScreen(
                     fontSize = 10.sp,
                     modifier = Modifier.padding(top = 8.dp)
                 )
+
+
+            }
+        }
+
+
+        if (isSearching || suggestions.isNotEmpty()) {
+
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 10.dp),
+
+                colors = CardDefaults.cardColors(
+                    containerColor = Color(0xFF151B14)
+                ),
+
+                shape = RoundedCornerShape(7.dp)
+            ) {
+
+                Column(
+                    modifier = Modifier.padding(10.dp)
+                ) {
+                    if (isSearching) {
+
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(top = 10.dp)
+                        ) {
+
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(16.dp),
+                                strokeWidth = 2.dp,
+                                color = Color(0xFFB7E07A)
+                            )
+
+                            Spacer(modifier = Modifier.width(10.dp))
+
+                            Text(
+                                text = "Finding cities...",
+                                color = Color.White,
+                                fontSize = 13.sp
+                            )
+                        }
+                    }
+
+                    suggestions.take(5).forEach { suggestion ->
+
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 6.dp),
+
+                            colors = CardDefaults.cardColors(
+                                containerColor = Color(0xFF1B2118)
+                            ),
+
+                            shape = RoundedCornerShape(20.dp)
+                        ) {
+
+                            Text(
+                                text = "${suggestion.name}, ${suggestion.country}",
+
+                                color = Color.White,
+
+                                fontSize = 13.sp,
+
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+
+                                        city = suggestion.name
+                                        viewModel.getWeather(suggestion.name)
+                                    }
+                                    .padding(vertical = 10.dp),
+
+
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                    }
+                }
             }
         }
         Spacer(modifier = Modifier.height(20.dp))
 
         Card(
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(16.dp),
+            shape = RoundedCornerShape(7.dp),
 
             colors = CardDefaults.cardColors(
                 containerColor = Color(0xFF11150F)
@@ -230,7 +322,7 @@ fun WeatherScreen(
             ) {
 
                 Text(
-                    text = "Jaipur",
+                    text = city.ifBlank { "Search City" },
                     color = Color.White,
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold
