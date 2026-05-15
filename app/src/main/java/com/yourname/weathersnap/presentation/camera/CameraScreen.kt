@@ -177,7 +177,7 @@ fun CameraScreen(
 
                 val photoFile = File(
                     context.cacheDir,
-                    "weather_photo.jpg"
+                    "weather_${System.currentTimeMillis()}.jpg"
                 )
 
                 val outputOptions =

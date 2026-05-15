@@ -15,8 +15,16 @@ import com.yourname.weathersnap.data.remote.CityResult
 @HiltViewModel
 class WeatherViewModel @Inject constructor(
     private val repository: WeatherRepository
-) : ViewModel() {
 
+) : ViewModel() {
+    private val cityCache =
+        mutableMapOf<
+                String,
+                List<CityResult>
+                >()
+
+    var errorMessage by mutableStateOf<String?>(null)
+        private set
     var weatherData by mutableStateOf<WeatherResponse?>(null)
         private set
 
@@ -36,6 +44,7 @@ class WeatherViewModel @Inject constructor(
 
         viewModelScope.launch {
             isLoadingWeather = true
+            errorMessage = null
             try {
 
                 val cityResult =
@@ -54,6 +63,8 @@ class WeatherViewModel @Inject constructor(
 
             } catch (e: Exception) {
                 isLoadingWeather = false
+                errorMessage =
+                    "Failed to load weather"
                 println(e.message)
                 e.printStackTrace()
             }
@@ -66,13 +77,35 @@ class WeatherViewModel @Inject constructor(
             try {
 
                 if (city.length > 2) {
+
+                    val query =
+                        city.trim().lowercase()
+
+                    if (cityCache.containsKey(query)) {
+
+                        citySuggestions =
+                            cityCache[query]
+
+                        isSearchingCities = false
+
+                        return@launch
+                    }
+
                     isSearchingCities = true
-                    citySuggestions =
+
+                    val results =
                         repository.searchCity(city).results
+
+                    citySuggestions = results
+
+                    cityCache[query] = results
+
                     isSearchingCities = false
 
                 } else {
+
                     isSearchingCities = false
+
                     citySuggestions = emptyList()
                 }
 

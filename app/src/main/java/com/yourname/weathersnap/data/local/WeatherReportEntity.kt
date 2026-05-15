@@ -29,5 +29,7 @@ data class WeatherReportEntity(
 
     val compressedSizeKb: Int,
 
-    val createdAt: Long
+    val createdAt: Long,
+
+    val weatherCondition: String
 )

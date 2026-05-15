@@ -13,5 +13,7 @@ data class CurrentWeather(
 
     val wind_speed_10m: Double,
 
-    val surface_pressure: Double
+    val surface_pressure: Double,
+
+    val weather_code: Int
 )

@@ -24,21 +24,73 @@ import androidx.compose.ui.platform.LocalContext
 import kotlin.math.roundToInt
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.yourname.weathersnap.data.local.WeatherReportEntity
-import com.yourname.weathersnap.presentation.weather.WeatherViewModel
+import androidx.compose.runtime.saveable.rememberSaveable
 
 @Composable
 fun CreateReportScreen(
     viewModel: ReportViewModel = hiltViewModel(),
     navController: NavController,
-    imagePath: String,
-    weatherViewModel: WeatherViewModel = hiltViewModel()
+    imagePath: String
 ) {
 
-    val weather =
-        weatherViewModel.weatherData
+    val weatherBackStackEntry = remember(
+        navController.currentBackStackEntry
+    ) {
+        navController.getBackStackEntry("weather")
+    }
+
+    val savedStateHandle =
+        weatherBackStackEntry.savedStateHandle
 
     val city =
-        weatherViewModel.selectedCity
+        savedStateHandle
+            ?.get<String>("city") ?: ""
+
+    val temperature =
+        savedStateHandle
+            ?.get<Double>("temperature") ?: 0.0
+
+    val humidity =
+        savedStateHandle
+            ?.get<Int>("humidity") ?: 0
+
+    val wind =
+        savedStateHandle
+            ?.get<Double>("wind") ?: 0.0
+
+    val pressure =
+        savedStateHandle
+            ?.get<Double>("pressure") ?: 0.0
+
+    val weatherCode =
+        savedStateHandle
+            .get<Int>("weatherCode") ?: 0
+
+    val weatherCondition = when (weatherCode) {
+
+        0 -> "Clear sky"
+
+        1, 2, 3 ->
+            "Partly cloudy"
+
+        45, 48 ->
+            "Foggy"
+
+        51, 53, 55 ->
+            "Drizzle"
+
+        61, 63, 65 ->
+            "Rainy"
+
+        71, 73, 75 ->
+            "Snowfall"
+
+        95 ->
+            "Thunderstorm"
+
+        else ->
+            "Unknown weather"
+    }
 
 
     val context = LocalContext.current
@@ -67,8 +119,12 @@ fun CreateReportScreen(
             ?.roundToInt()
 
 
-    var notes by remember {
+    var notes by rememberSaveable {
         mutableStateOf("")
+    }
+
+    var isSaving by remember {
+        mutableStateOf(false)
     }
 
     Column(
@@ -190,7 +246,7 @@ fun CreateReportScreen(
                         )
 
                         Text(
-                            text = "Current Weather Snapshot",
+                            text = weatherCondition,
                             color = Color.Gray,
                             fontSize = 12.sp
                         )
@@ -198,7 +254,7 @@ fun CreateReportScreen(
 
                     Text(
                         text =
-                            "${weather?.current?.temperature_2m ?: 0}°C",
+                            "${temperature.toInt()}°C",
                         color = Color(0xFFB7E07A),
                         fontSize = 26.sp,
                         fontWeight = FontWeight.Bold
@@ -242,7 +298,7 @@ fun CreateReportScreen(
 
                             Text(
                                 text =
-                                    "${weather?.current?.relative_humidity_2m ?: 0}%",
+                                    "${humidity}%",
                                 color = Color(0xFF5ED6B3),
                                 fontWeight = FontWeight.Bold
                             )
@@ -280,7 +336,7 @@ fun CreateReportScreen(
 
                             Text(
                                 text =
-                                    "${weather?.current?.wind_speed_10m ?: 0} km/h",
+                                    "${wind} km/h",
                                 color = Color(0xFF5DA9FF),
                                 fontWeight = FontWeight.Bold
                             )
@@ -318,7 +374,7 @@ fun CreateReportScreen(
 
                             Text(
                                 text =
-                                    "${weather?.current?.surface_pressure ?: 0}",
+                                    "${pressure}",
                                 color = Color(0xFFFFB347),
                                 fontWeight = FontWeight.Bold
                             )
@@ -388,6 +444,14 @@ fun CreateReportScreen(
 
                 Button(
                     onClick = {
+
+                        if (imagePath.isNotEmpty()) {
+
+                            File(imagePath).delete()
+
+                            compressedFile?.delete()
+                        }
+
                         navController.navigate("camera_screen")
                     },
 
@@ -545,10 +609,12 @@ fun CreateReportScreen(
         Spacer(modifier = Modifier.height(14.dp))
 
         Button(
-            onClick = {
 
+            onClick = {
+                if (isSaving) return@Button
                 if (imagePath.isNotEmpty()) {
 
+                    isSaving = true
                     viewModel.saveReport(
 
                         WeatherReportEntity(
@@ -556,16 +622,19 @@ fun CreateReportScreen(
                             city = city,
 
                             temperature =
-                                weather?.current?.temperature_2m ?: 0.0,
+                                temperature,
 
                             humidity =
-                                weather?.current?.relative_humidity_2m ?: 0,
+                                humidity,
 
                             windSpeed =
-                                weather?.current?.wind_speed_10m ?: 0.0,
+                                wind,
 
                             pressure =
-                                weather?.current?.surface_pressure ?: 0.0,
+                                pressure,
+
+                            weatherCondition =
+                                weatherCondition,
 
                             notes = notes,
 

@@ -21,6 +21,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.ui.layout.ContentScale
 import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.runtime.remember
 
 @Composable
 fun ReportsScreen(
@@ -194,6 +198,19 @@ fun ReportsScreen(
             ) {
 
                 items(reports) { report ->
+                    val configuration =
+                        LocalConfiguration.current
+
+                    val formattedDate = remember(
+                        report.createdAt,
+                        configuration
+                    ) {
+
+                        SimpleDateFormat(
+                            "dd MMM yyyy, hh:mm a",
+                            configuration.locales[0]
+                        ).format(Date(report.createdAt))
+                    }
 
                     Card(
                         modifier = Modifier.fillMaxWidth(),
@@ -206,7 +223,7 @@ fun ReportsScreen(
                     ) {
 
                         Column(
-                            modifier = Modifier.padding(14.dp)
+                            modifier = Modifier.padding(16.dp)
                         ) {
 
                             AsyncImage(
@@ -216,35 +233,191 @@ fun ReportsScreen(
 
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(180.dp)
-                                    .clip(RoundedCornerShape(14.dp)),
+                                    .height(190.dp)
+                                    .clip(RoundedCornerShape(18.dp)),
 
                                 contentScale = ContentScale.Crop
                             )
 
-                            Spacer(modifier = Modifier.height(12.dp))
+                            Spacer(modifier = Modifier.height(16.dp))
 
-                            Text(
-                                text = report.city,
-                                color = Color.White,
-                                fontSize = 20.sp,
-                                fontWeight = FontWeight.Bold
-                            )
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
 
-                            Spacer(modifier = Modifier.height(4.dp))
+                                horizontalArrangement =
+                                    Arrangement.SpaceBetween,
 
-                            Text(
-                                text = "${report.temperature}°C",
-                                color = Color(0xFFB7E07A),
-                                fontWeight = FontWeight.Bold
-                            )
+                                verticalAlignment =
+                                    Alignment.CenterVertically
+                            ) {
 
-                            Spacer(modifier = Modifier.height(8.dp))
+                                Column(
+                                    modifier = Modifier.weight(1f)
+                                ) {
 
-                            Text(
-                                text = report.notes,
-                                color = Color.LightGray
-                            )
+                                    Text(
+                                        text = report.city,
+
+                                        color = Color.White,
+
+                                        fontSize = 22.sp,
+
+                                        fontWeight = FontWeight.Bold
+                                    )
+
+                                    Spacer(modifier = Modifier.height(4.dp))
+
+                                    Text(
+                                        text = report.weatherCondition,
+
+                                        color = Color.LightGray,
+
+                                        fontSize = 14.sp
+                                    )
+
+                                    Spacer(modifier = Modifier.height(2.dp))
+
+                                    Text(
+                                        text = formattedDate,
+
+                                        color = Color.Gray,
+
+                                        fontSize = 12.sp
+                                    )
+                                }
+
+                                Box(
+                                    modifier = Modifier
+                                        .clip(RoundedCornerShape(14.dp))
+                                        .background(
+                                            Color(0xFF5E6A00)
+                                        )
+                                        .padding(
+                                            horizontal = 18.dp,
+                                            vertical = 14.dp
+                                        ),
+
+                                    contentAlignment = Alignment.Center
+                                ) {
+
+                                    Text(
+                                        text =
+                                            "${report.temperature.toInt()}°C",
+
+                                        color = Color.White,
+
+                                        fontWeight = FontWeight.Bold,
+
+                                        fontSize = 24.sp
+                                    )
+                                }
+                            }
+
+                            Spacer(modifier = Modifier.height(18.dp))
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+
+                                horizontalArrangement =
+                                    Arrangement.spacedBy(12.dp)
+                            ) {
+
+                                Card(
+                                    modifier = Modifier.weight(1f),
+
+                                    colors = CardDefaults.cardColors(
+                                        containerColor = Color(0xFF3A3323)
+                                    ),
+
+                                    shape = RoundedCornerShape(12.dp)
+                                ) {
+
+                                    Column(
+                                        modifier = Modifier.padding(14.dp)
+                                    ) {
+
+                                        Text(
+                                            text = "Original",
+
+                                            color = Color.LightGray,
+
+                                            fontSize = 12.sp
+                                        )
+
+                                        Spacer(modifier = Modifier.height(4.dp))
+
+                                        Text(
+                                            text =
+                                                "${report.originalSizeKb} KB",
+
+                                            color = Color(0xFFD08B28),
+
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    }
+                                }
+
+                                Card(
+                                    modifier = Modifier.weight(1f),
+
+                                    colors = CardDefaults.cardColors(
+                                        containerColor = Color(0xFF233A33)
+                                    ),
+
+                                    shape = RoundedCornerShape(12.dp)
+                                ) {
+
+                                    Column(
+                                        modifier = Modifier.padding(14.dp)
+                                    ) {
+
+                                        Text(
+                                            text = "Compressed",
+
+                                            color = Color.LightGray,
+
+                                            fontSize = 12.sp
+                                        )
+
+                                        Spacer(modifier = Modifier.height(4.dp))
+
+                                        Text(
+                                            text =
+                                                "${report.compressedSizeKb} KB",
+
+                                            color = Color(0xFF4BAA94),
+
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    }
+                                }
+                            }
+
+                            if (report.notes.isNotBlank()) {
+
+                                Spacer(modifier = Modifier.height(14.dp))
+
+                                Box(
+                                    modifier = Modifier
+                                        .clip(RoundedCornerShape(12.dp))
+                                        .background(
+                                            Color(0xFF4A4D38)
+                                        )
+                                        .padding(
+                                            horizontal = 14.dp,
+                                            vertical = 10.dp
+                                        )
+                                ) {
+
+                                    Text(
+                                        text = report.notes,
+
+                                        color = Color.White,
+
+                                        fontSize = 14.sp
+                                    )
+                                }
+                            }
                         }
                     }
                 }

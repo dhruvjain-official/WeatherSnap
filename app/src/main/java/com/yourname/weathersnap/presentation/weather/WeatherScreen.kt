@@ -48,6 +48,8 @@ fun WeatherScreen(
         mutableStateOf("")
     }
 
+
+
     Column(
 
         modifier = Modifier
@@ -72,6 +74,44 @@ fun WeatherScreen(
         val suggestions = viewModel.citySuggestions ?: emptyList()
         val isSearching = viewModel.isSearchingCities
         val isLoadingWeather = viewModel.isLoadingWeather
+        val errorMessage = viewModel.errorMessage
+        val selectedCity = viewModel.selectedCity
+
+        val weatherCondition =
+            if (weather != null) {
+
+                when (
+                    weather.current.weather_code
+                ) {
+
+                    0 -> "Clear sky"
+
+                    1, 2, 3 ->
+                        "Partly cloudy"
+
+                    45, 48 ->
+                        "Foggy"
+
+                    51, 53, 55 ->
+                        "Drizzle"
+
+                    61, 63, 65 ->
+                        "Rainy"
+
+                    71, 73, 75 ->
+                        "Snowfall"
+
+                    95 ->
+                        "Thunderstorm"
+
+                    else ->
+                        "Unknown weather"
+                }
+
+            } else {
+                ""
+            }
+
 
         Card(
             modifier = Modifier.fillMaxWidth(),
@@ -247,7 +287,7 @@ fun WeatherScreen(
         }
 
 
-        if (isSearching || suggestions.isNotEmpty()) {
+        if (isSearching || !suggestions.isNullOrEmpty()) {
 
             Card(
                 modifier = Modifier
@@ -287,7 +327,7 @@ fun WeatherScreen(
                         }
                     }
 
-                    suggestions.take(5).forEach { suggestion ->
+                    suggestions.orEmpty().take(5).forEach { suggestion ->
 
                         Card(
                             modifier = Modifier
@@ -312,7 +352,8 @@ fun WeatherScreen(
                                     .fillMaxWidth()
                                     .clickable {
 
-                                        city = suggestion.name
+                                        city =
+                                            "${suggestion.name}, ${suggestion.country}"
 
                                         viewModel.clearSuggestions()
                                     }
@@ -328,7 +369,73 @@ fun WeatherScreen(
         }
         Spacer(modifier = Modifier.height(20.dp))
 
-        if (weather == null) {
+        if (errorMessage != null) {
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+
+                colors = CardDefaults.cardColors(
+                    containerColor = Color(0xFF3B1F1F)
+                ),
+
+                shape = RoundedCornerShape(10.dp)
+            ) {
+
+                Column(
+                    modifier = Modifier.padding(16.dp),
+
+                    horizontalAlignment =
+                        Alignment.CenterHorizontally
+                ) {
+
+                    Text(
+                        text = "Weather failed to load",
+
+                        color = Color.White,
+
+                        fontWeight = FontWeight.Bold
+                    )
+
+                    Spacer(
+                        modifier = Modifier.height(6.dp)
+                    )
+
+                    Text(
+                        text = errorMessage,
+
+                        color = Color.LightGray,
+
+                        fontSize = 13.sp
+                    )
+
+                    Spacer(
+                        modifier = Modifier.height(14.dp)
+                    )
+
+                    Button(
+                        onClick = {
+                            viewModel.getWeather(city)
+                        },
+
+                        colors =
+                            ButtonDefaults.buttonColors(
+                                containerColor =
+                                    Color(0xFFB7E07A)
+                            )
+                    ) {
+
+                        Text(
+                            text = "Retry",
+                            color = Color.Black
+                        )
+                    }
+                }
+            }
+        }
+
+        else if (weather == null) {
 
             Card(
                 modifier = Modifier.fillMaxWidth(),
@@ -404,7 +511,7 @@ fun WeatherScreen(
                 ) {
 
                     Text(
-                        text = city.ifBlank { "Search City" },
+                        text = selectedCity,
                         color = Color.White,
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Bold
@@ -422,7 +529,7 @@ fun WeatherScreen(
                     Spacer(modifier = Modifier.height(6.dp))
 
                     Text(
-                        text = "Cloudy",
+                        text = weatherCondition,
                         color = Color.LightGray
                     )
 
@@ -452,6 +559,45 @@ fun WeatherScreen(
 
                     Button(
                         onClick = {
+                            navController.currentBackStackEntry
+                                ?.savedStateHandle
+                                ?.set("city", city)
+
+                            navController.currentBackStackEntry
+                                ?.savedStateHandle
+                                ?.set(
+                                    "temperature",
+                                    weather.current.temperature_2m
+                                )
+
+                            navController.currentBackStackEntry
+                                ?.savedStateHandle
+                                ?.set(
+                                    "humidity",
+                                    weather.current.relative_humidity_2m
+                                )
+
+                            navController.currentBackStackEntry
+                                ?.savedStateHandle
+                                ?.set(
+                                    "wind",
+                                    weather.current.wind_speed_10m
+                                )
+
+                            navController.currentBackStackEntry
+                                ?.savedStateHandle
+                                ?.set(
+                                    "pressure",
+                                    weather.current.surface_pressure
+                                )
+
+                            navController.currentBackStackEntry
+                                ?.savedStateHandle
+                                ?.set(
+                                    "weatherCode",
+                                    weather.current.weather_code
+                                )
+
                             navController.navigate("create_report")
                         },
 
