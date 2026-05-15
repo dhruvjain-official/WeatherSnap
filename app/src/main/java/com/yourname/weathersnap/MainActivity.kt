@@ -45,9 +45,18 @@ class MainActivity : ComponentActivity() {
                         ReportsScreen(navController)
                     }
 
-                    composable("create_report") {
+                    composable(
+                        route = "create_report?imagePath={imagePath}"
+                    ) { backStackEntry ->
 
-                        CreateReportScreen(navController)
+                        val imagePath =
+                            backStackEntry.arguments
+                                ?.getString("imagePath") ?: ""
+
+                        CreateReportScreen(
+                            navController = navController,
+                            imagePath = imagePath
+                        )
                     }
 
                     composable("camera_screen") {

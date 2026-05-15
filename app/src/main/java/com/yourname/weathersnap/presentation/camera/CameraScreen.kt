@@ -194,7 +194,9 @@ fun CameraScreen(
                             outputFileResults: ImageCapture.OutputFileResults
                         ) {
 
-                            navController.popBackStack()
+                            navController.navigate(
+                                "create_report?imagePath=${photoFile.absolutePath}"
+                            )
                         }
 
                         override fun onError(

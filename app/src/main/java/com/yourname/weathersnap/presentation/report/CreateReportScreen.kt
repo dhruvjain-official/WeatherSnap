@@ -15,10 +15,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
+import androidx.compose.ui.layout.ContentScale
+import java.io.File
 
 @Composable
 fun CreateReportScreen(
-    navController: NavController
+    navController: NavController,
+    imagePath: String
 ) {
 
     var notes by remember {
@@ -310,12 +314,27 @@ fun CreateReportScreen(
                     contentAlignment = Alignment.Center
                 ) {
 
-                    Text(
-                        text = "Photo preview",
-                        color = Color.White,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.SemiBold
-                    )
+                    if (imagePath.isNotEmpty()) {
+
+                        AsyncImage(
+                            model = File(imagePath),
+
+                            contentDescription = null,
+
+                            modifier = Modifier.fillMaxSize(),
+
+                            contentScale = ContentScale.Crop
+                        )
+
+                    } else {
+
+                        Text(
+                            text = "Photo preview",
+                            color = Color.White,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(14.dp))
