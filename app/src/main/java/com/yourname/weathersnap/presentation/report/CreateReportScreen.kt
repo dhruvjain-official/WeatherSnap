@@ -35,7 +35,7 @@ import kotlinx.coroutines.launch
 fun CreateReportScreen(
     viewModel: ReportViewModel = hiltViewModel(),
     navController: NavController,
-    imagePath: String
+    imagePath: String = ""
 ) {
 
     val weatherBackStackEntry = remember(
@@ -106,19 +106,58 @@ fun CreateReportScreen(
         DraftManager(context)
     }
 
-    val originalFile =
+    var restoredImagePath by rememberSaveable {
+        mutableStateOf("")
+    }
+
+    var notes by rememberSaveable {
+        mutableStateOf("")
+    }
+
+    LaunchedEffect(Unit) {
+
+        val savedNotes =
+            draftManager.getNotes()
+
+        val savedImagePath =
+            draftManager.getImagePath()
+
+        if (savedNotes.isNotEmpty()) {
+
+            notes = savedNotes
+        }
+
+        if (savedImagePath.isNotEmpty()) {
+
+            restoredImagePath =
+                savedImagePath
+        }
+    }
+
+    var isSaving by remember {
+        mutableStateOf(false)
+    }
+
+    val finalImagePath =
+
         if (imagePath.isNotEmpty())
-            File(imagePath)
+            imagePath
+        else
+            restoredImagePath
+
+    val originalFile =
+        if (finalImagePath.isNotEmpty())
+            File(finalImagePath)
         else
             null
 
     val compressedFile = remember(imagePath) {
 
-        if (imagePath.isNotEmpty()) {
+        if (finalImagePath.isNotEmpty()) {
 
             ImageCompressor.compressImage(
                 context,
-                imagePath
+                finalImagePath
             )
 
         } else {
@@ -135,25 +174,6 @@ fun CreateReportScreen(
         compressedFile?.length()?.div(1024f)
             ?.roundToInt()
 
-
-    var notes by rememberSaveable {
-        mutableStateOf("")
-    }
-
-    LaunchedEffect(Unit) {
-
-        val savedNotes =
-            draftManager.getNotes()
-
-        if (savedNotes.isNotEmpty()) {
-
-            notes = savedNotes
-        }
-    }
-
-    var isSaving by remember {
-        mutableStateOf(false)
-    }
 
     Column(
         modifier = Modifier
@@ -445,7 +465,7 @@ fun CreateReportScreen(
                     contentAlignment = Alignment.Center
                 ) {
 
-                    if (imagePath.isNotEmpty()) {
+                    if (finalImagePath.isNotEmpty()){
 
                         androidx.compose.animation.AnimatedVisibility(
 
@@ -456,7 +476,7 @@ fun CreateReportScreen(
                         ) {
 
                             AsyncImage(
-                                model = File(imagePath),
+                                model = File(finalImagePath),
 
                                 contentDescription = null,
 
@@ -482,9 +502,9 @@ fun CreateReportScreen(
                 Button(
                     onClick = {
 
-                        if (imagePath.isNotEmpty()) {
+                        if (finalImagePath.isNotEmpty()) {
 
-                            File(imagePath).delete()
+                            File(finalImagePath).delete()
 
                             compressedFile?.delete()
                         }
@@ -503,14 +523,14 @@ fun CreateReportScreen(
 
                     Text(
                         text =
-                            if (imagePath.isNotEmpty())
+                            if (finalImagePath.isNotEmpty())
                                 "Retake Photo"
                             else
                                 "Capture Photo",
                         color = Color(0xFF2B2B1F)
                     )
                 }
-                if (imagePath.isNotEmpty()) {
+                if (finalImagePath.isNotEmpty()) {
 
                     Spacer(modifier = Modifier.height(16.dp))
 
@@ -618,7 +638,7 @@ fun CreateReportScreen(
 
                             draftManager.saveDraft(
                                 notes = notes,
-                                imagePath = imagePath,
+                                imagePath = finalImagePath,
                                 city = city
                             )
                         }
@@ -658,7 +678,7 @@ fun CreateReportScreen(
 
             onClick = {
                 if (isSaving) return@Button
-                if (imagePath.isNotEmpty()) {
+                if (finalImagePath.isNotEmpty()) {
 
                     isSaving = true
                     viewModel.saveReport(
@@ -684,7 +704,7 @@ fun CreateReportScreen(
 
                             notes = notes,
 
-                            imagePath = imagePath,
+                            imagePath = finalImagePath,
 
                             compressedImagePath =
                                 compressedFile?.absolutePath ?: "",
