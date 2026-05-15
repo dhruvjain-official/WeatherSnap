@@ -1,5 +1,6 @@
 package com.yourname.weathersnap.presentation.report
 
+import androidx.camera.core.ImageCaptureException
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -320,7 +321,9 @@ fun CreateReportScreen(
                 Spacer(modifier = Modifier.height(14.dp))
 
                 Button(
-                    onClick = { },
+                    onClick = {
+                        navController.navigate("camera_screen")
+                    },
 
                     modifier = Modifier.fillMaxWidth(),
 

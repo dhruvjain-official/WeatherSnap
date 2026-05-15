@@ -19,6 +19,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.yourname.weathersnap.presentation.report.ReportsScreen
 import com.yourname.weathersnap.presentation.report.CreateReportScreen
+import com.yourname.weathersnap.presentation.camera.CameraScreen
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -47,6 +48,11 @@ class MainActivity : ComponentActivity() {
                     composable("create_report") {
 
                         CreateReportScreen(navController)
+                    }
+
+                    composable("camera_screen") {
+
+                        CameraScreen(navController)
                     }
                 }
             }
