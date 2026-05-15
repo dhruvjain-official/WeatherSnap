@@ -14,6 +14,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.yourname.weathersnap.ui.theme.WeatherSnapTheme
 import com.yourname.weathersnap.presentation.weather.WeatherScreen
 import dagger.hilt.android.AndroidEntryPoint
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.yourname.weathersnap.presentation.report.ReportsScreen
+import com.yourname.weathersnap.presentation.report.CreateReportScreen
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -22,7 +27,28 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             WeatherSnapTheme {
-                WeatherScreen()
+                val navController = rememberNavController()
+
+                NavHost(
+                    navController = navController,
+                    startDestination = "weather"
+                ) {
+
+                    composable("weather") {
+
+                        WeatherScreen(navController)
+                    }
+
+                    composable("reports") {
+
+                        ReportsScreen(navController)
+                    }
+
+                    composable("create_report") {
+
+                        CreateReportScreen(navController)
+                    }
+                }
             }
         }
     }

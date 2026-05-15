@@ -26,10 +26,13 @@ class WeatherViewModel @Inject constructor(
     var isSearchingCities by mutableStateOf(false)
         private set
 
+    var isLoadingWeather by mutableStateOf(false)
+        private set
+
     fun getWeather(city: String) {
 
         viewModelScope.launch {
-
+            isLoadingWeather = true
             try {
 
                 val cityResult =
@@ -42,10 +45,11 @@ class WeatherViewModel @Inject constructor(
                     latitude = location.latitude,
                     longitude = location.longitude
                 )
+                isLoadingWeather = false
 
 
             } catch (e: Exception) {
-
+                isLoadingWeather = false
                 println(e.message)
                 e.printStackTrace()
             }
@@ -73,5 +77,10 @@ class WeatherViewModel @Inject constructor(
                 e.printStackTrace()
             }
         }
+    }
+
+    fun clearSuggestions() {
+
+        citySuggestions = emptyList()
     }
 }
