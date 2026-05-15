@@ -1,7 +1,5 @@
 package com.yourname.weathersnap.presentation.weather
 
-import androidx.compose.ui.tooling.preview.Preview
-
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -37,6 +35,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.navigation.NavController
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 
 @Composable
 fun WeatherScreen(
@@ -287,7 +290,18 @@ fun WeatherScreen(
         }
 
 
-        if (isSearching || !suggestions.isNullOrEmpty()) {
+        AnimatedVisibility(
+
+            visible =
+                isSearching ||
+                        suggestions.isNotEmpty(),
+
+            enter =
+                fadeIn() + expandVertically(),
+
+            exit =
+                fadeOut() + shrinkVertically()
+        ) {
 
             Card(
                 modifier = Modifier
@@ -620,10 +634,4 @@ fun WeatherScreen(
             }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun WeatherScreenPreview() {
-
 }

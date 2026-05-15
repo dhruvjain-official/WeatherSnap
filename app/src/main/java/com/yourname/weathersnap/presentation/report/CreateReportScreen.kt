@@ -25,6 +25,11 @@ import kotlin.math.roundToInt
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.yourname.weathersnap.data.local.WeatherReportEntity
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.scaleIn
+import com.yourname.weathersnap.datastore.DraftManager
+import kotlinx.coroutines.launch
 
 @Composable
 fun CreateReportScreen(
@@ -95,20 +100,32 @@ fun CreateReportScreen(
 
     val context = LocalContext.current
 
+    val scope = rememberCoroutineScope()
+
+    val draftManager = remember {
+        DraftManager(context)
+    }
+
     val originalFile =
         if (imagePath.isNotEmpty())
             File(imagePath)
         else
             null
 
-    val compressedFile =
-        if (imagePath.isNotEmpty())
+    val compressedFile = remember(imagePath) {
+
+        if (imagePath.isNotEmpty()) {
+
             ImageCompressor.compressImage(
                 context,
                 imagePath
             )
-        else
+
+        } else {
+
             null
+        }
+    }
 
     val originalSizeKb =
         originalFile?.length()?.div(1024f)
@@ -121,6 +138,17 @@ fun CreateReportScreen(
 
     var notes by rememberSaveable {
         mutableStateOf("")
+    }
+
+    LaunchedEffect(Unit) {
+
+        val savedNotes =
+            draftManager.getNotes()
+
+        if (savedNotes.isNotEmpty()) {
+
+            notes = savedNotes
+        }
     }
 
     var isSaving by remember {
@@ -419,15 +447,24 @@ fun CreateReportScreen(
 
                     if (imagePath.isNotEmpty()) {
 
-                        AsyncImage(
-                            model = File(imagePath),
+                        androidx.compose.animation.AnimatedVisibility(
 
-                            contentDescription = null,
+                            visible = true,
 
-                            modifier = Modifier.fillMaxSize(),
+                            enter =
+                                fadeIn() + scaleIn()
+                        ) {
 
-                            contentScale = ContentScale.Crop
-                        )
+                            AsyncImage(
+                                model = File(imagePath),
+
+                                contentDescription = null,
+
+                                modifier = Modifier.fillMaxSize(),
+
+                                contentScale = ContentScale.Crop
+                            )
+                        }
 
                     } else {
 
@@ -576,6 +613,15 @@ fun CreateReportScreen(
 
                     onValueChange = {
                         notes = it
+
+                        scope.launch {
+
+                            draftManager.saveDraft(
+                                notes = notes,
+                                imagePath = imagePath,
+                                city = city
+                            )
+                        }
                     },
 
                     modifier = Modifier
@@ -653,6 +699,10 @@ fun CreateReportScreen(
                                 System.currentTimeMillis()
                         )
                     )
+                    scope.launch {
+
+                        draftManager.clearDraft()
+                    }
 
                     navController.navigate("reports") {
 

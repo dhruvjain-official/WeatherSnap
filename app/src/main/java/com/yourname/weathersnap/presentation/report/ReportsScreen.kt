@@ -425,9 +425,3 @@ fun ReportsScreen(
         }
     }
 }
-
-@Preview(showBackground = true)
-@Composable
-fun ReportScreenPreview() {
-
-}
