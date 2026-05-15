@@ -18,12 +18,42 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import androidx.compose.ui.layout.ContentScale
 import java.io.File
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import com.yourname.weathersnap.utils.ImageCompressor
+import androidx.compose.ui.platform.LocalContext
+import kotlin.math.roundToInt
 
 @Composable
 fun CreateReportScreen(
     navController: NavController,
     imagePath: String
 ) {
+    val context = LocalContext.current
+
+    val originalFile =
+        if (imagePath.isNotEmpty())
+            File(imagePath)
+        else
+            null
+
+    val compressedFile =
+        if (imagePath.isNotEmpty())
+            ImageCompressor.compressImage(
+                context,
+                imagePath
+            )
+        else
+            null
+
+    val originalSizeKb =
+        originalFile?.length()?.div(1024f)
+            ?.roundToInt()
+
+    val compressedSizeKb =
+        compressedFile?.length()?.div(1024f)
+            ?.roundToInt()
+
 
     var notes by remember {
         mutableStateOf("")
@@ -32,6 +62,7 @@ fun CreateReportScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .verticalScroll(rememberScrollState())
             .background(
                 brush = Brush.verticalGradient(
                     colors = listOf(
@@ -354,9 +385,83 @@ fun CreateReportScreen(
                 ) {
 
                     Text(
-                        text = "Capture Photo",
+                        text =
+                            if (imagePath.isNotEmpty())
+                                "Retake Photo"
+                            else
+                                "Capture Photo",
                         color = Color(0xFF2B2B1F)
                     )
+                }
+                if (imagePath.isNotEmpty()) {
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+
+                        Card(
+                            modifier = Modifier.weight(1f),
+
+                            colors = CardDefaults.cardColors(
+                                containerColor = Color(0xFF3A3323)
+                            ),
+
+                            shape = RoundedCornerShape(10.dp)
+                        ) {
+
+                            Column(
+                                modifier = Modifier.padding(12.dp)
+                            ) {
+
+                                Text(
+                                    text = "Original",
+                                    color = Color.LightGray,
+                                    fontSize = 13.sp
+                                )
+
+                                Spacer(modifier = Modifier.height(4.dp))
+
+                                Text(
+                                    text = "${originalSizeKb ?: 0} KB",
+                                    color = Color(0xFFD08B28),
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                        }
+
+                        Card(
+                            modifier = Modifier.weight(1f),
+
+                            colors = CardDefaults.cardColors(
+                                containerColor = Color(0xFF233A33)
+                            ),
+
+                            shape = RoundedCornerShape(10.dp)
+                        ) {
+
+                            Column(
+                                modifier = Modifier.padding(12.dp)
+                            ) {
+
+                                Text(
+                                    text = "Compressed",
+                                    color = Color.LightGray,
+                                    fontSize = 13.sp
+                                )
+
+                                Spacer(modifier = Modifier.height(4.dp))
+
+                                Text(
+                                    text = "${compressedSizeKb ?: 0} KB",
+                                    color = Color(0xFF4BAA94),
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }
