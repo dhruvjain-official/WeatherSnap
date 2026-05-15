@@ -108,7 +108,7 @@ fun CreateReportScreen(
             }
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(14.dp))
 
         Card(
             modifier = Modifier.fillMaxWidth(),
@@ -121,126 +121,301 @@ fun CreateReportScreen(
         ) {
 
             Column(
+                modifier = Modifier.padding(10.dp)
+            ) {
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+
+                    horizontalArrangement = Arrangement.SpaceBetween,
+
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+
+                    Column {
+
+                        Text(
+                            text = "Jaipur",
+                            color = Color.White,
+                            fontSize = 22.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+
+                        Text(
+                            text = "Current Weather Snapshot",
+                            color = Color.Gray,
+                            fontSize = 12.sp
+                        )
+                    }
+
+                    Text(
+                        text = "31°C",
+                        color = Color(0xFFB7E07A),
+                        fontSize = 26.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+
+                    Card(
+                        modifier = Modifier.weight(1f),
+
+                        colors = CardDefaults.cardColors(
+                            containerColor = Color(0xFF24352B)
+                        ),
+
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+
+                        Column(
+                            modifier = Modifier.padding(
+                                horizontal = 8.dp,
+                                vertical = 5.dp
+                            ),
+
+                            horizontalAlignment = Alignment.Start
+                        ) {
+
+                            Text(
+                                text = "Humidity",
+                                color = Color.Gray,
+                                fontSize = 11.sp
+                            )
+
+                            Spacer(modifier = Modifier.height(1.dp))
+
+                            Text(
+                                text = "48%",
+                                color = Color(0xFF5ED6B3),
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.width(6.dp))
+
+                    Card(
+                        modifier = Modifier.weight(1f),
+
+                        colors = CardDefaults.cardColors(
+                            containerColor = Color(0xFF263545)
+                        ),
+
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+
+                        Column(
+                            modifier = Modifier.padding(
+                                horizontal = 8.dp,
+                                vertical = 5.dp
+                            ),
+
+                            horizontalAlignment = Alignment.Start
+                        ) {
+
+                            Text(
+                                text = "Wind",
+                                color = Color.Gray,
+                                fontSize = 11.sp
+                            )
+
+                            Spacer(modifier = Modifier.height(1.dp))
+
+                            Text(
+                                text = "12 km/h",
+                                color = Color(0xFF5DA9FF),
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.width(6.dp))
+
+                    Card(
+                        modifier = Modifier.weight(1f),
+
+                        colors = CardDefaults.cardColors(
+                            containerColor = Color(0xFF3D3424)
+                        ),
+
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+
+                        Column(
+                            modifier = Modifier.padding(
+                                horizontal = 8.dp,
+                                vertical = 5.dp
+                            ),
+
+                            horizontalAlignment = Alignment.Start
+                        ) {
+
+                            Text(
+                                text = "Pressure",
+                                color = Color.Gray,
+                                fontSize = 11.sp
+                            )
+
+                            Spacer(modifier = Modifier.height(1.dp))
+
+                            Text(
+                                text = "1008",
+                                color = Color(0xFFFFB347),
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(14.dp))
+
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+
+            colors = CardDefaults.cardColors(
+                containerColor = Color(0xFF2C2B24)
+            ),
+
+            shape = RoundedCornerShape(12.dp)
+        ) {
+
+            Column(
+                modifier = Modifier.padding(16.dp)
+            ) {
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(160.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(
+                            brush = Brush.horizontalGradient(
+                                colors = listOf(
+                                    Color(0xFF4C4E3B),
+                                    Color(0xFF5E6A00)
+                                )
+                            )
+                        ),
+
+                    contentAlignment = Alignment.Center
+                ) {
+
+                    Text(
+                        text = "Photo preview",
+                        color = Color.White,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(14.dp))
+
+                Button(
+                    onClick = { },
+
+                    modifier = Modifier.fillMaxWidth(),
+
+                    shape = RoundedCornerShape(30.dp),
+
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFFB9CB7A)
+                    )
+                ) {
+
+                    Text(
+                        text = "Capture Photo",
+                        color = Color(0xFF2B2B1F)
+                    )
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(14.dp))
+
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+
+            colors = CardDefaults.cardColors(
+                containerColor = Color(0xFF11150F)
+            ),
+
+            shape = RoundedCornerShape(12.dp)
+        ) {
+
+            Column(
                 modifier = Modifier.padding(16.dp)
             ) {
 
                 Text(
-                    text = "Weather Snapshot",
+                    text = "Field Notes",
                     color = Color.White,
-                    fontSize = 18.sp,
+                    fontSize = 15.sp,
                     fontWeight = FontWeight.SemiBold
                 )
 
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(14.dp))
 
-                Text(
-                    text = "Temperature: --°C",
-                    color = Color.White
-                )
+                OutlinedTextField(
+                    value = notes,
 
-                Text(
-                    text = "Humidity: --%",
-                    color = Color.White
-                )
+                    onValueChange = {
+                        notes = it
+                    },
 
-                Text(
-                    text = "Wind: -- km/h",
-                    color = Color.White
-                )
-            }
-        }
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(90.dp),
 
-        Spacer(modifier = Modifier.height(20.dp))
+                    placeholder = {
+                        Text(
+                            text = "Notes",
+                            color = Color.Gray,
+                            fontSize = 12.sp
+                        )
+                    },
 
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(180.dp),
+                    shape = RoundedCornerShape(12.dp),
 
-            colors = CardDefaults.cardColors(
-                containerColor = Color(0xFF1B2118)
-            ),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = Color(0xFF8FA86E),
+                        unfocusedBorderColor = Color(0xFF4A5440),
 
-            shape = RoundedCornerShape(10.dp)
-        ) {
+                        focusedTextColor = Color.White,
+                        unfocusedTextColor = Color.White,
 
-            Box(
-                modifier = Modifier.fillMaxSize(),
-
-                contentAlignment = Alignment.Center
-            ) {
-
-                Text(
-                    text = "No Image Captured",
-                    color = Color.Gray
+                        focusedContainerColor = Color(0xFF1B2118),
+                        unfocusedContainerColor = Color(0xFF1B2118)
+                    )
                 )
             }
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
-
-        OutlinedTextField(
-            value = notes,
-
-            onValueChange = {
-                notes = it
-            },
-
-            modifier = Modifier.fillMaxWidth(),
-
-            label = {
-                Text("Weather Notes")
-            },
-
-            shape = RoundedCornerShape(10.dp),
-
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = Color(0xFF8FA86E),
-                unfocusedBorderColor = Color(0xFF4A5440),
-
-                focusedTextColor = Color.White,
-                unfocusedTextColor = Color.White,
-
-                focusedContainerColor = Color(0xFF1B2118),
-                unfocusedContainerColor = Color(0xFF1B2118)
-            )
-        )
-
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(14.dp))
 
         Button(
             onClick = { },
 
             modifier = Modifier.fillMaxWidth(),
 
+            shape = RoundedCornerShape(30.dp),
+
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFF8EA56C)
-            ),
-
-            shape = RoundedCornerShape(14.dp)
-        ) {
-
-            Text(
-                text = "Capture Weather Photo"
+                containerColor = Color(0xFFB9CB7A)
             )
-        }
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        Button(
-            onClick = { },
-
-            modifier = Modifier.fillMaxWidth(),
-
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFF2D6A4F)
-            ),
-
-            shape = RoundedCornerShape(14.dp)
         ) {
 
             Text(
-                text = "Save Report"
+                text = "Save Report",
+                color = Color(0xFF2B2B1F)
             )
         }
     }
