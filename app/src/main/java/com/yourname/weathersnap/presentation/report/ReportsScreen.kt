@@ -15,11 +15,20 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.AsyncImage
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.ui.layout.ContentScale
+import java.io.File
 
 @Composable
 fun ReportsScreen(
-    navController: NavController
+    navController: NavController,
+    viewModel: ReportViewModel = hiltViewModel()
 ) {
+
+    val reports = viewModel.reports
 
     Column(
 
@@ -83,7 +92,7 @@ fun ReportsScreen(
                         )
 
                         Text(
-                            text = "0 reports stored locally",
+                            text = "${reports.size} report stored locally",
                             fontSize = 10.sp,
                             color = Color.DarkGray,
                             letterSpacing = 0.1.sp,
@@ -94,7 +103,14 @@ fun ReportsScreen(
 
                     Button(
                         onClick = {
-                            navController.popBackStack()
+                            navController.navigate("weather") {
+
+                                popUpTo("weather") {
+                                    inclusive = true
+                                }
+
+                                launchSingleTop = true
+                            }
                         },
                         shape = RoundedCornerShape(9.dp),
 
@@ -119,53 +135,119 @@ fun ReportsScreen(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        Card(
-            modifier = Modifier.fillMaxWidth(),
+        if (reports.isEmpty()) {
 
-            shape = RoundedCornerShape(18.dp),
+            Card(
+                modifier = Modifier.fillMaxWidth(),
 
-            colors = CardDefaults.cardColors(
-                containerColor = Color(0xFF2C2B24)
-            )
-        ) {
+                shape = RoundedCornerShape(18.dp),
 
-            Column(
-                modifier = Modifier.padding(18.dp)
+                colors = CardDefaults.cardColors(
+                    containerColor = Color(0xFF2C2B24)
+                )
             ) {
 
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(160.dp)
-                        .clip(RoundedCornerShape(16.dp))
-                        .background(
-                            brush = Brush.horizontalGradient(
-                                colors = listOf(
-                                    Color(0xFF596300),
-                                    Color(0xFF4B5121)
-                                )
-                            )
-                        ),
-
-                    contentAlignment = Alignment.Center
+                Column(
+                    modifier = Modifier.padding(18.dp)
                 ) {
 
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(160.dp)
+                            .clip(RoundedCornerShape(16.dp))
+                            .background(
+                                brush = Brush.horizontalGradient(
+                                    colors = listOf(
+                                        Color(0xFF596300),
+                                        Color(0xFF4B5121)
+                                    )
+                                )
+                            ),
+
+                        contentAlignment = Alignment.Center
+                    ) {
+
+                        Text(
+                            text = "No reports yet",
+                            color = Color.White,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(18.dp))
+
                     Text(
-                        text = "No reports yet",
-                        color = Color.White,
-                        fontWeight = FontWeight.SemiBold
+                        text = "Create and save a weather report to see image, notes, and weather details here.",
+
+                        color = Color.LightGray,
+
+                        fontSize = 14.sp
                     )
                 }
+            }
 
-                Spacer(modifier = Modifier.height(18.dp))
+        } else {
 
-                Text(
-                    text = "Create and save a weather report to see image, notes, and weather details here.",
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(14.dp)
+            ) {
 
-                    color = Color.LightGray,
+                items(reports) { report ->
 
-                    fontSize = 14.sp
-                )
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+
+                        colors = CardDefaults.cardColors(
+                            containerColor = Color(0xFF2C2B24)
+                        ),
+
+                        shape = RoundedCornerShape(16.dp)
+                    ) {
+
+                        Column(
+                            modifier = Modifier.padding(14.dp)
+                        ) {
+
+                            AsyncImage(
+                                model = File(report.imagePath),
+
+                                contentDescription = null,
+
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(180.dp)
+                                    .clip(RoundedCornerShape(14.dp)),
+
+                                contentScale = ContentScale.Crop
+                            )
+
+                            Spacer(modifier = Modifier.height(12.dp))
+
+                            Text(
+                                text = report.city,
+                                color = Color.White,
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+
+                            Spacer(modifier = Modifier.height(4.dp))
+
+                            Text(
+                                text = "${report.temperature}°C",
+                                color = Color(0xFFB7E07A),
+                                fontWeight = FontWeight.Bold
+                            )
+
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            Text(
+                                text = report.notes,
+                                color = Color.LightGray
+                            )
+                        }
+                    }
+                }
             }
         }
     }

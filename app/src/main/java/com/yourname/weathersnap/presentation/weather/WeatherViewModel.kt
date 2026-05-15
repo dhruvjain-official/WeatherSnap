@@ -29,6 +29,9 @@ class WeatherViewModel @Inject constructor(
     var isLoadingWeather by mutableStateOf(false)
         private set
 
+    var selectedCity by mutableStateOf("")
+        private set
+
     fun getWeather(city: String) {
 
         viewModelScope.launch {
@@ -46,6 +49,7 @@ class WeatherViewModel @Inject constructor(
                     longitude = location.longitude
                 )
                 isLoadingWeather = false
+                selectedCity = city
 
 
             } catch (e: Exception) {

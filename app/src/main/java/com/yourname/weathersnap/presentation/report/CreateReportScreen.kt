@@ -1,6 +1,5 @@
 package com.yourname.weathersnap.presentation.report
 
-import androidx.camera.core.ImageCaptureException
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -23,12 +22,25 @@ import androidx.compose.foundation.verticalScroll
 import com.yourname.weathersnap.utils.ImageCompressor
 import androidx.compose.ui.platform.LocalContext
 import kotlin.math.roundToInt
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.yourname.weathersnap.data.local.WeatherReportEntity
+import com.yourname.weathersnap.presentation.weather.WeatherViewModel
 
 @Composable
 fun CreateReportScreen(
+    viewModel: ReportViewModel = hiltViewModel(),
     navController: NavController,
-    imagePath: String
+    imagePath: String,
+    weatherViewModel: WeatherViewModel = hiltViewModel()
 ) {
+
+    val weather =
+        weatherViewModel.weatherData
+
+    val city =
+        weatherViewModel.selectedCity
+
+
     val context = LocalContext.current
 
     val originalFile =
@@ -171,7 +183,7 @@ fun CreateReportScreen(
                     Column {
 
                         Text(
-                            text = "Jaipur",
+                            text = city,
                             color = Color.White,
                             fontSize = 22.sp,
                             fontWeight = FontWeight.Bold
@@ -185,7 +197,8 @@ fun CreateReportScreen(
                     }
 
                     Text(
-                        text = "31°C",
+                        text =
+                            "${weather?.current?.temperature_2m ?: 0}°C",
                         color = Color(0xFFB7E07A),
                         fontSize = 26.sp,
                         fontWeight = FontWeight.Bold
@@ -228,7 +241,8 @@ fun CreateReportScreen(
                             Spacer(modifier = Modifier.height(1.dp))
 
                             Text(
-                                text = "48%",
+                                text =
+                                    "${weather?.current?.relative_humidity_2m ?: 0}%",
                                 color = Color(0xFF5ED6B3),
                                 fontWeight = FontWeight.Bold
                             )
@@ -265,7 +279,8 @@ fun CreateReportScreen(
                             Spacer(modifier = Modifier.height(1.dp))
 
                             Text(
-                                text = "12 km/h",
+                                text =
+                                    "${weather?.current?.wind_speed_10m ?: 0} km/h",
                                 color = Color(0xFF5DA9FF),
                                 fontWeight = FontWeight.Bold
                             )
@@ -302,7 +317,8 @@ fun CreateReportScreen(
                             Spacer(modifier = Modifier.height(1.dp))
 
                             Text(
-                                text = "1008",
+                                text =
+                                    "${weather?.current?.surface_pressure ?: 0}",
                                 color = Color(0xFFFFB347),
                                 fontWeight = FontWeight.Bold
                             )
@@ -529,7 +545,54 @@ fun CreateReportScreen(
         Spacer(modifier = Modifier.height(14.dp))
 
         Button(
-            onClick = { },
+            onClick = {
+
+                if (imagePath.isNotEmpty()) {
+
+                    viewModel.saveReport(
+
+                        WeatherReportEntity(
+
+                            city = city,
+
+                            temperature =
+                                weather?.current?.temperature_2m ?: 0.0,
+
+                            humidity =
+                                weather?.current?.relative_humidity_2m ?: 0,
+
+                            windSpeed =
+                                weather?.current?.wind_speed_10m ?: 0.0,
+
+                            pressure =
+                                weather?.current?.surface_pressure ?: 0.0,
+
+                            notes = notes,
+
+                            imagePath = imagePath,
+
+                            compressedImagePath =
+                                compressedFile?.absolutePath ?: "",
+
+                            originalSizeKb =
+                                originalSizeKb ?: 0,
+
+                            compressedSizeKb =
+                                compressedSizeKb ?: 0,
+
+                            createdAt =
+                                System.currentTimeMillis()
+                        )
+                    )
+
+                    navController.navigate("reports") {
+
+                        popUpTo("weather")
+
+                        launchSingleTop = true
+                    }
+                }
+            },
 
             modifier = Modifier.fillMaxWidth(),
 
