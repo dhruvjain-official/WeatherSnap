@@ -17,7 +17,7 @@ object ImageCompressor {
 
         val bitmap = BitmapFactory.decodeFile(
             originalFile.absolutePath
-        )
+        ) ?: throw Exception("Failed to decode image")
 
         val compressedFile = File(
             context.cacheDir,

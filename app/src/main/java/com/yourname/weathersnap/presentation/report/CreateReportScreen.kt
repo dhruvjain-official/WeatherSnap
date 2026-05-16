@@ -25,7 +25,6 @@ import kotlin.math.roundToInt
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.yourname.weathersnap.data.local.WeatherReportEntity
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.scaleIn
 import com.yourname.weathersnap.datastore.DraftManager
@@ -47,25 +46,28 @@ fun CreateReportScreen(
     val savedStateHandle =
         weatherBackStackEntry.savedStateHandle
 
-    val city =
-        savedStateHandle
-            ?.get<String>("city") ?: ""
+    var city by rememberSaveable {
+        mutableStateOf(
+            savedStateHandle
+                .get<String>("city") ?: ""
+        )
+    }
 
     val temperature =
         savedStateHandle
-            ?.get<Double>("temperature") ?: 0.0
+            .get<Double>("temperature") ?: 0.0
 
     val humidity =
         savedStateHandle
-            ?.get<Int>("humidity") ?: 0
+            .get<Int>("humidity") ?: 0
 
     val wind =
         savedStateHandle
-            ?.get<Double>("wind") ?: 0.0
+            .get<Double>("wind") ?: 0.0
 
     val pressure =
         savedStateHandle
-            ?.get<Double>("pressure") ?: 0.0
+            .get<Double>("pressure") ?: 0.0
 
     val weatherCode =
         savedStateHandle
@@ -122,6 +124,9 @@ fun CreateReportScreen(
         val savedImagePath =
             draftManager.getImagePath()
 
+        val savedCity =
+            draftManager.getCity()
+
         if (savedNotes.isNotEmpty()) {
 
             notes = savedNotes
@@ -131,6 +136,11 @@ fun CreateReportScreen(
 
             restoredImagePath =
                 savedImagePath
+        }
+
+        if (savedCity.isNotEmpty()) {
+
+            city = savedCity
         }
     }
 
@@ -142,6 +152,7 @@ fun CreateReportScreen(
 
         if (imagePath.isNotEmpty())
             imagePath
+
         else
             restoredImagePath
 
@@ -151,7 +162,19 @@ fun CreateReportScreen(
         else
             null
 
-    val compressedFile = remember(imagePath) {
+    LaunchedEffect(finalImagePath) {
+
+        if (finalImagePath.isNotEmpty()) {
+
+            draftManager.saveDraft(
+                notes = notes,
+                imagePath = finalImagePath,
+                city = city
+            )
+        }
+    }
+
+    val compressedFile = remember(finalImagePath) {
 
         if (finalImagePath.isNotEmpty()) {
 
@@ -232,7 +255,7 @@ fun CreateReportScreen(
                         )
 
                         Text(
-                            text = "Capture weather evidence",
+                            text = "Capture, compress, annotate",
 
                             fontSize = 11.sp,
 
@@ -249,7 +272,7 @@ fun CreateReportScreen(
                             containerColor = Color(0xFF2A3402)
                         ),
 
-                        shape = RoundedCornerShape(10.dp)
+                        shape = RoundedCornerShape(20.dp)
                     ) {
 
                         Text(
@@ -289,7 +312,7 @@ fun CreateReportScreen(
                         Text(
                             text = city,
                             color = Color.White,
-                            fontSize = 22.sp,
+                            fontSize = 18.sp,
                             fontWeight = FontWeight.Bold
                         )
 
@@ -304,7 +327,7 @@ fun CreateReportScreen(
                         text =
                             "${temperature.toInt()}°C",
                         color = Color(0xFFB7E07A),
-                        fontSize = 26.sp,
+                        fontSize = 22.sp,
                         fontWeight = FontWeight.Bold
                     )
                 }
@@ -383,8 +406,7 @@ fun CreateReportScreen(
                             Spacer(modifier = Modifier.height(1.dp))
 
                             Text(
-                                text =
-                                    "${wind} km/h",
+                                text = "${String.format("%.1f", wind / 3.6)} m/s",
                                 color = Color(0xFF5DA9FF),
                                 fontWeight = FontWeight.Bold
                             )

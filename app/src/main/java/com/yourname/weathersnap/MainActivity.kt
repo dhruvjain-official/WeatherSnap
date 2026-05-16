@@ -79,7 +79,42 @@ class MainActivity : ComponentActivity() {
                         WeatherScreen(navController)
                     }
 
-                    composable("reports") {
+                    composable(
+
+                        route = "reports",
+
+                        enterTransition = {
+
+                            slideIntoContainer(
+                                AnimatedContentTransitionScope.SlideDirection.Left,
+                                animationSpec = tween(300)
+                            )
+                        },
+
+                        exitTransition = {
+
+                            slideOutOfContainer(
+                                AnimatedContentTransitionScope.SlideDirection.Left,
+                                animationSpec = tween(300)
+                            )
+                        },
+
+                        popEnterTransition = {
+
+                            slideIntoContainer(
+                                AnimatedContentTransitionScope.SlideDirection.Right,
+                                animationSpec = tween(300)
+                            )
+                        },
+
+                        popExitTransition = {
+
+                            slideOutOfContainer(
+                                AnimatedContentTransitionScope.SlideDirection.Right,
+                                animationSpec = tween(300)
+                            )
+                        }
+                    ) {
 
                         ReportsScreen(navController)
                     }
@@ -107,4 +142,3 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-

@@ -41,8 +41,8 @@ fun ReportsScreen(
             .background(
                 brush = Brush.verticalGradient(
                     colors = listOf(
-                        Color(0xFF2A300B),
-                        Color(0xFF111813)
+                        Color(0xFF1A2B22),
+                        Color(0xFF111109)
                     )
                 )
             )
@@ -64,8 +64,8 @@ fun ReportsScreen(
                     .background(
                         brush = Brush.horizontalGradient(
                             colors = listOf(
-                                Color(0xFFBFCC7E),
-                                Color(0xFF9ECFC0)
+                                Color(0xFFA3CFC1),
+                                Color(0xFFBFCD80)
                             )
                         )
                     )
@@ -90,7 +90,7 @@ fun ReportsScreen(
                         Text(
                             text = "Saved Reports",
                             fontSize = 18.sp,
-                            color = Color(0xFF243010),
+                            color = Color(0xFF1A2B22),
                             letterSpacing = 0.1.sp,
                             fontWeight = FontWeight.SemiBold
                         )
@@ -98,7 +98,7 @@ fun ReportsScreen(
                         Text(
                             text = "${reports.size} report stored locally",
                             fontSize = 10.sp,
-                            color = Color.DarkGray,
+                            color = Color(0xFF1A2B22),
                             letterSpacing = 0.1.sp,
                             maxLines = 2,
                             fontWeight = FontWeight.Medium
@@ -116,17 +116,20 @@ fun ReportsScreen(
                                 launchSingleTop = true
                             }
                         },
-                        shape = RoundedCornerShape(9.dp),
+
+                        modifier = Modifier.width(75.dp),
+
+                        shape = RoundedCornerShape(20.dp),
 
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFF2A3402)
+                            containerColor = Color(0xFF1A2B22)
                         ),
+
                         contentPadding = PaddingValues(
                             horizontal = 14.dp,
                             vertical = 2.dp
                         )
-
-                    ) {
+                    ){
 
                         Text(
                             text = "Back",
@@ -163,8 +166,8 @@ fun ReportsScreen(
                             .background(
                                 brush = Brush.horizontalGradient(
                                     colors = listOf(
-                                        Color(0xFF596300),
-                                        Color(0xFF4B5121)
+                                        Color(0xFF434B08),
+                                        Color(0xFF959F3A)
                                     )
                                 )
                             ),
@@ -175,7 +178,8 @@ fun ReportsScreen(
                         Text(
                             text = "No reports yet",
                             color = Color.White,
-                            fontWeight = FontWeight.SemiBold
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 16.sp
                         )
                     }
 
@@ -186,7 +190,7 @@ fun ReportsScreen(
 
                         color = Color.LightGray,
 
-                        fontSize = 14.sp
+                        fontSize = 10.sp
                     )
                 }
             }

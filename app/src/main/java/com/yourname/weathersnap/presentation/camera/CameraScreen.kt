@@ -196,7 +196,14 @@ fun CameraScreen(
 
                             navController.navigate(
                                 "create_report?imagePath=${photoFile.absolutePath}"
-                            )
+                            ) {
+
+                                popUpTo("camera_screen") {
+                                    inclusive = true
+                                }
+
+                                launchSingleTop = true
+                            }
                         }
 
                         override fun onError(

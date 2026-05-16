@@ -40,6 +40,13 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.material3.LocalTextStyle
+import androidx.compose.foundation.border
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.layout.offset
 
 @Composable
 fun WeatherScreen(
@@ -60,13 +67,14 @@ fun WeatherScreen(
             .background(
                 brush = Brush.verticalGradient(
                     colors = listOf(
-                        Color(0xFF2A300B),
-                        Color(0xFF111813)
+                        Color(0xFF2C310D),
+                        Color(0xFF0C100C)
                     )
                 )
             )
             .padding(horizontal = 16.dp)
-            .padding(top = 48.dp),
+            .padding(top = 48.dp)
+            .verticalScroll(rememberScrollState()),
 
         verticalArrangement = Arrangement.Top,
 
@@ -171,21 +179,24 @@ fun WeatherScreen(
                         onClick = {
                             navController.navigate("reports")
                         },
-                        shape = RoundedCornerShape(9.dp),
+
+                        modifier = Modifier.width(75.dp),
+
+                        shape = RoundedCornerShape(14.dp),
 
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color(0xFF2A3402)
                         ),
+
                         contentPadding = PaddingValues(
                             horizontal = 14.dp,
                             vertical = 2.dp
                         )
-
-                    ) {
-
+                    ){
                         Text(
                             text = "Reports",
-                            fontSize = 10.sp
+                            fontSize = 10.sp,
+                            color = Color(0xFFC0CD7F)
                         )
                     }
                 }
@@ -210,6 +221,14 @@ fun WeatherScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     OutlinedTextField(
+                        singleLine = true,
+
+                        textStyle = LocalTextStyle.current.copy(
+                            fontSize = 16.sp
+                        ),
+
+
+
                         value = city,
 
                         onValueChange = {
@@ -219,22 +238,31 @@ fun WeatherScreen(
                             viewModel.searchCities(it)
                         },
 
-                        modifier = Modifier.weight(1f),
+                        modifier = Modifier
+                            .weight(1f)
+                            .heightIn(min = 56.dp),
 
                         label = {
-                            Text(text = "City")
+                            Text(
+                                text = "City",
+                                fontSize = 12.sp
+                            )
                         },
                         shape = RoundedCornerShape(5.dp),
 
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = Color(0xFF8FA86E),
-                            unfocusedBorderColor = Color(0xFF4A5440),
+                            unfocusedBorderColor = Color.White,
 
                             focusedTextColor = Color.White,
                             unfocusedTextColor = Color.White,
 
                             focusedContainerColor = Color(0xFF1B2118),
-                            unfocusedContainerColor = Color(0xFF1B2118)
+                            unfocusedContainerColor = Color(0xFF1B2118),
+
+                            focusedLabelColor = Color(0xFFB7E07A),
+                            unfocusedLabelColor = Color.Gray,
+                            cursorColor = Color(0xFFB7E07A),
                         )
                     )
                     Spacer(modifier = Modifier.width(8.dp))
@@ -249,7 +277,11 @@ fun WeatherScreen(
                         shape = RoundedCornerShape(22.dp),
 
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFF8EA56C)
+                            containerColor =
+                                if (isLoadingWeather)
+                                    Color(0xFF5B5A4D)
+                                else
+                                    Color(0xFFC0CD7F)
                         ),
 
                         contentPadding = PaddingValues(
@@ -272,7 +304,8 @@ fun WeatherScreen(
 
                             Text(
                                 text = "Search",
-                                fontSize = 10.sp
+                                fontSize = 10.sp,
+                                color = Color(0xFF2E3401)
                             )
                         }
                     }
@@ -309,20 +342,24 @@ fun WeatherScreen(
                     .padding(top = 10.dp),
 
                 colors = CardDefaults.cardColors(
-                    containerColor = Color(0xFF151B14)
+                    containerColor = Color(0xFF2C2B24)
                 ),
 
                 shape = RoundedCornerShape(7.dp)
             ) {
 
                 Column(
-                    modifier = Modifier.padding(10.dp)
+                    modifier = Modifier.padding(vertical = 10.dp)
                 ) {
                     if (isSearching) {
 
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(top = 10.dp)
+                            modifier = Modifier.padding(
+                                top = 10.dp,
+                                start = 10.dp,
+                                end = 10.dp
+                            )
                         ) {
 
                             CircularProgressIndicator(
@@ -341,15 +378,24 @@ fun WeatherScreen(
                         }
                     }
 
-                    suggestions.orEmpty().take(5).forEach { suggestion ->
+                    suggestions.orEmpty().take(5).forEachIndexed { index, suggestion ->
 
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(top = 6.dp),
+                                .padding(
+                                    top = 6.dp,
+                                    start = 10.dp,
+                                    end = 10.dp
+                                )
+                                .border(
+                                    width = 1.dp,
+                                    color = Color(0xFF5B5A4D),
+                                    shape = RoundedCornerShape(20.dp)
+                                ),
 
                             colors = CardDefaults.cardColors(
-                                containerColor = Color(0xFF1B2118)
+                                containerColor = Color(0xFF2C2B24)
                             ),
 
                             shape = RoundedCornerShape(20.dp)
@@ -376,6 +422,21 @@ fun WeatherScreen(
 
                                 textAlign = TextAlign.Center
                             )
+                        }
+                        if (index != suggestions.take(5).lastIndex) {
+
+                            Spacer(modifier = Modifier.height(10.dp))
+
+                            HorizontalDivider(
+                                modifier = Modifier
+                                    .fillMaxWidth(),
+
+                                color = Color(0xFF5B5A4D),
+
+                                thickness = 0.7.dp
+                            )
+
+                            Spacer(modifier = Modifier.height(3.dp))
                         }
                     }
                 }
@@ -472,8 +533,8 @@ fun WeatherScreen(
                             .background(
                                 brush = Brush.horizontalGradient(
                                     colors = listOf(
-                                        Color(0xFF596300),
-                                        Color(0xFF00695C)
+                                        Color(0xFF45492F),
+                                        Color(0xFF21483E)
                                     )
                                 )
                             ),
@@ -484,25 +545,27 @@ fun WeatherScreen(
                         Text(
                             text = "Search. Capture. Save.",
                             color = Color.White,
-                            fontWeight = FontWeight.SemiBold
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 15.sp
                         )
                     }
 
-                    Spacer(modifier = Modifier.height(14.dp))
+                    Spacer(modifier = Modifier.height(12.dp))
 
                     Text(
                         text = "No weather loaded",
                         color = Color.White,
-                        fontWeight = FontWeight.SemiBold
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 15.sp
                     )
 
-                    Spacer(modifier = Modifier.height(6.dp))
+                    Spacer(modifier = Modifier.height(3.dp))
 
                     Text(
                         text = "Enter more than 2 letters, choose a city, then search.",
 
-                        color = Color.LightGray,
-                        fontSize = 13.sp
+                        color = Color.White,
+                        fontSize = 11.sp
                     )
                 }
             }
@@ -560,7 +623,8 @@ fun WeatherScreen(
                         )
 
                         Text(
-                            text = "Wind\n${weather.current.wind_speed_10m} km/h",
+                            text =
+                                "Wind\n${String.format("%.1f", weather.current.wind_speed_10m / 3.6)} m/s",
                             color = Color.White
                         )
 
@@ -575,7 +639,7 @@ fun WeatherScreen(
                         onClick = {
                             navController.currentBackStackEntry
                                 ?.savedStateHandle
-                                ?.set("city", city)
+                                ?.set("city", selectedCity)
 
                             navController.currentBackStackEntry
                                 ?.savedStateHandle
