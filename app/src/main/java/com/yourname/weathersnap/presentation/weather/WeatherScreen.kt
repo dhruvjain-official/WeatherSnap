@@ -510,6 +510,78 @@ fun WeatherScreen(
             }
         }
 
+        else if (isLoadingWeather) {
+
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+
+                colors = CardDefaults.cardColors(
+                    containerColor = Color(0xFF2C2B24)
+                ),
+
+                shape = RoundedCornerShape(10.dp)
+            ) {
+
+                Column(
+                    modifier = Modifier.padding(16.dp)
+                ) {
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(18.dp),
+                            strokeWidth = 2.dp,
+                            color = Color(0xFFC7D58A)
+                        )
+
+                        Spacer(modifier = Modifier.width(12.dp))
+
+                        Column {
+
+                            Text(
+                                text = "Loading weather...",
+                                color = Color.White,
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.SemiBold
+                            )
+
+                            Text(
+                                text = "Fetching coordinates and current conditions",
+                                color = Color.Gray,
+                                fontSize = 11.sp
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(18.dp))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+
+                        repeat(3) {
+
+                            Card(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .height(56.dp),
+
+                                colors = CardDefaults.cardColors(
+                                    containerColor = Color(0xFF4A4A3D)
+                                ),
+
+                                shape = RoundedCornerShape(10.dp)
+                            ) {}
+                        }
+                    }
+                }
+            }
+        }
+
         else if (weather == null) {
 
             Card(
@@ -571,72 +643,244 @@ fun WeatherScreen(
             }
 
         }
-
         else {
 
             Card(
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(7.dp),
 
                 colors = CardDefaults.cardColors(
                     containerColor = Color(0xFF11150F)
-                )
+                ),
+
+                shape = RoundedCornerShape(10.dp)
             ) {
 
                 Column(
-                    modifier = Modifier.padding(16.dp)
+                    modifier = Modifier.padding(10.dp)
                 ) {
-
-                    Text(
-                        text = selectedCity,
-                        color = Color.White,
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-
-                    Spacer(modifier = Modifier.height(6.dp))
-
-                    Text(
-                        text = "${weather.current.temperature_2m}°C",
-                        color = Color(0xFFB7E07A),
-                        fontSize = 42.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-
-                    Spacer(modifier = Modifier.height(6.dp))
-
-                    Text(
-                        text = weatherCondition,
-                        color = Color.LightGray
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
+
+                        horizontalArrangement = Arrangement.SpaceBetween,
+
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+
+                        Column {
+
+                            Text(
+                                text = selectedCity,
+                                color = Color.White,
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+
+                            Text(
+                                text = weatherCondition,
+                                color = Color.Gray,
+                                fontSize = 12.sp
+                            )
+                        }
+
+                        Card(
+
+                            colors = CardDefaults.cardColors(
+                                containerColor = Color(0xFF424A04)
+                            ),
+
+                            shape = RoundedCornerShape(8.dp)
+                        ) {
+
+                            Text(
+                                text =
+                                    "${weather.current.temperature_2m.toInt()}°C",
+
+                                color = Color.White,
+
+                                fontSize = 22.sp,
+
+                                fontWeight = FontWeight.Bold,
+
+                                modifier = Modifier.padding(
+                                    horizontal = 12.dp,
+                                    vertical = 8.dp
+                                )
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
 
-                        Text(
-                            text = "Humidity\n${weather.current.relative_humidity_2m}%",
-                            color = Color.White
-                        )
+                        Card(
+                            modifier = Modifier.weight(1f),
 
-                        Text(
-                            text =
-                                "Wind\n${String.format("%.1f", weather.current.wind_speed_10m / 3.6)} m/s",
-                            color = Color.White
-                        )
+                            colors = CardDefaults.cardColors(
+                                containerColor = Color(0xFF24352B)
+                            ),
 
-                        Text(
-                            text = "Pressure\n${weather.current.surface_pressure} hPa",
-                            color = Color.White
-                        )
+                            shape = RoundedCornerShape(12.dp)
+                        ) {
+
+                            Column(
+                                modifier = Modifier.padding(
+                                    horizontal = 8.dp,
+                                    vertical = 5.dp
+                                ),
+
+                                horizontalAlignment = Alignment.Start
+                            ) {
+
+                                Text(
+                                    text = "Humidity",
+                                    color = Color.Gray,
+                                    fontSize = 11.sp
+                                )
+
+                                Spacer(modifier = Modifier.height(1.dp))
+
+                                Text(
+                                    text =
+                                        "${weather.current.relative_humidity_2m}%",
+
+                                    color = Color(0xFF5ED6B3),
+
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.width(6.dp))
+
+                        Card(
+                            modifier = Modifier.weight(1f),
+
+                            colors = CardDefaults.cardColors(
+                                containerColor = Color(0xFF263545)
+                            ),
+
+                            shape = RoundedCornerShape(12.dp)
+                        ) {
+
+                            Column(
+                                modifier = Modifier.padding(
+                                    horizontal = 8.dp,
+                                    vertical = 5.dp
+                                ),
+
+                                horizontalAlignment = Alignment.Start
+                            ) {
+
+                                Text(
+                                    text = "Wind",
+                                    color = Color.Gray,
+                                    fontSize = 11.sp
+                                )
+
+                                Spacer(modifier = Modifier.height(1.dp))
+
+                                Text(
+                                    text =
+                                        "${String.format("%.1f", weather.current.wind_speed_10m / 3.6)} m/s",
+
+                                    color = Color(0xFF5DA9FF),
+
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.width(6.dp))
+
+                        Card(
+                            modifier = Modifier.weight(1f),
+
+                            colors = CardDefaults.cardColors(
+                                containerColor = Color(0xFF3D3424)
+                            ),
+
+                            shape = RoundedCornerShape(12.dp)
+                        ) {
+
+                            Column(
+                                modifier = Modifier.padding(
+                                    horizontal = 8.dp,
+                                    vertical = 5.dp
+                                ),
+
+                                horizontalAlignment = Alignment.Start
+                            ) {
+
+                                Text(
+                                    text = "Pressure",
+                                    color = Color.Gray,
+                                    fontSize = 11.sp
+                                )
+
+                                Spacer(modifier = Modifier.height(1.dp))
+
+                                Text(
+                                    text =
+                                        "${weather.current.surface_pressure.toInt()}",
+
+                                    color = Color(0xFFFFB347),
+
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                        }
                     }
-                    Spacer(modifier = Modifier.height(20.dp))
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+
+                        colors = CardDefaults.cardColors(
+                            containerColor = Color(0xFF3A392F)
+                        ),
+
+                        shape = RoundedCornerShape(10.dp)
+                    ) {
+
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(
+                                    horizontal = 12.dp,
+                                    vertical = 10.dp
+                                ),
+
+                            horizontalArrangement =
+                                Arrangement.SpaceBetween
+                        ) {
+
+                            Text(
+                                text = "Report readiness",
+                                color = Color.LightGray,
+                                fontSize = 11.sp
+                            )
+
+                            Text(
+                                text = "Camera and Room DB enabled",
+                                color = Color.White,
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
 
                     Button(
                         onClick = {
+
                             navController.currentBackStackEntry
                                 ?.savedStateHandle
                                 ?.set("city", selectedCity)
@@ -681,17 +925,16 @@ fun WeatherScreen(
 
                         modifier = Modifier.fillMaxWidth(),
 
-                        shape = RoundedCornerShape(14.dp),
+                        shape = RoundedCornerShape(30.dp),
 
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFF8EA56C)
+                            containerColor = Color(0xFFBFCD7F)
                         )
                     ) {
 
                         Text(
                             text = "Create Report",
-                            color = Color.Black,
-                            fontWeight = FontWeight.SemiBold
+                            color = Color(0xFF2B2B1F)
                         )
                     }
                 }
